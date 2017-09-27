@@ -1605,6 +1605,7 @@ typedef struct _vg_regex_context_s {
 	pcre_extra		**vcr_regex_extra;
 	const char		**vcr_regex_pat;
 	unsigned long		vcr_nalloc;
+	int			vcr_caseinsensitive;
 } vg_regex_context_t;
 
 static int
@@ -1649,7 +1650,8 @@ vg_regex_context_add_patterns(vg_context_t *vcp,
 	nres = vcrp->base.vc_npatterns;
 	for (i = 0; i < npatterns; i++) {
 		vcrp->vcr_regex[nres] =
-			pcre_compile(patterns[i], 0,
+			pcre_compile(patterns[i],
+				     vcrp->vcr_caseinsensitive ? PCRE_CASELESS : 0,
 				     &pcre_errptr, &pcre_erroffset, NULL);
 		if (!vcrp->vcr_regex[nres]) {
 			const char *spaces = "                ";
@@ -1818,7 +1820,7 @@ out:
 }
 
 vg_context_t *
-vg_regex_context_new(int addrtype, int privtype)
+vg_regex_context_new(int addrtype, int privtype, int caseinsensitive)
 {
 	vg_regex_context_t *vcrp;
 
@@ -1839,6 +1841,7 @@ vg_regex_context_new(int addrtype, int privtype)
 		vcrp->base.vc_hash160_sort = NULL;
 		vcrp->vcr_regex = NULL;
 		vcrp->vcr_nalloc = 0;
+		vcrp->vcr_caseinsensitive = caseinsensitive;
 	}
 	return &vcrp->base;
 }

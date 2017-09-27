@@ -499,11 +499,6 @@ main(int argc, char **argv)
 	}
 #endif
 
-	if (caseinsensitive && regex)
-		fprintf(stderr,
-			"WARNING: case insensitive mode incompatible with "
-			"regular expressions\n");
-
 	pubkeytype = addrtype;
 	if (format == VCF_SCRIPT)
 	{
@@ -537,7 +532,8 @@ main(int argc, char **argv)
 	}
 
 	if (regex) {
-		vcp = vg_regex_context_new(addrtype, privtype);
+		vcp = vg_regex_context_new(addrtype, privtype,
+					   caseinsensitive);
 
 	} else {
 		vcp = vg_prefix_context_new(addrtype, privtype,
